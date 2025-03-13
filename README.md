@@ -1,4 +1,4 @@
-# gulp-html-template
+# Gulp HTML Template
 Write HTML via Gulp JS
 
 First, install the NPM
@@ -8,3 +8,7 @@ First, install the NPM
 After the installation of NPM use the GULP command
 
 `gulp`
+
+OR
+
+`npm run dev`
