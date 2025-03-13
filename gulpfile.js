@@ -20,12 +20,12 @@ const jqueryPath = 'src/assets/js/jquery.min.js';
 var paths = {
     css: {
         src: [
-            'src/assets/sass/**/*.sass',
+            'src/assets/sass/*.sass',
         ],
         dest: 'build/assets/css/'
     },
     js: {
-        src: 'src/assets/js/**/*.js',
+        src: 'src/assets/js/*.js',
         dest: 'build/assets/js/'
     },
     images: {
