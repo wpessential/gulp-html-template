@@ -129,9 +129,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 package-lock.json
-build/index.html
-build/assets/css/main.min.css
-build/assets/css/components/footer/main.min.css
-build/assets/css/components/header/main.min.css
-build/assets/images/favicon.png
-build/assets/js/main.min.js
+build/*
