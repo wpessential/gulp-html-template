@@ -8,7 +8,6 @@ const cleanCSS = require('gulp-clean-css');
 //const del = require('del');
 const fs = require('fs');
 const https = require('https');
-const path = require('path');
 const sass = require('gulp-sass')(require('sass'));
 sass.compiler = require('node-sass');
 const fileinclude = require('gulp-file-include');
@@ -158,7 +157,10 @@ async function buildAndReload() {
  * Specify if tasks run in series or parallel using `series` and `parallel`
  */
 function build() {
-    server.init({ server: { baseDir: 'build/' } });
+    server.init({
+        server: { baseDir: 'build/' },
+        open: false  // ✅ Prevents BrowserSync from trying to open a browser 
+    });
 
     // Build and reload at the first time
     buildAndReload();
