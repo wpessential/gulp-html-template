@@ -1,5 +1,5 @@
-# Gulp HTML Template
-Write HTML via Gulp JS
+# Gulp HTML Template Compiler
+Write HTML via Gulp JS using the NPM 20.16.0
 
 First, install the NPM
 
