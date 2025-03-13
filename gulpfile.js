@@ -6,10 +6,16 @@ const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
 const cleanCSS = require('gulp-clean-css');
 //const del = require('del');
+const fs = require('fs');
+const https = require('https');
+const path = require('path');
 const sass = require('gulp-sass')(require('sass'));
 sass.compiler = require('node-sass');
 const fileinclude = require('gulp-file-include');
 const server = require('browser-sync').create();
+
+const jqueryCDN = 'https://code.jquery.com/jquery-3.6.4.min.js';
+const jqueryPath = 'src/assets/js/jquery.min.js';
 
 var paths = {
     css: {
@@ -30,6 +36,12 @@ var paths = {
         src: 'src/assets/svg/**/*.svg',
         dest: 'build/assets/svg/'
     },
+    fonts: {
+        src: [
+            'src/assets/webfonts/**/*.{woof,WOOF,woff2,WOFF2,ttf,TTF,otf,OTF,eot,EOT}',
+        ],
+        dest: 'build/assets/webfonts/'
+    },
     html: {
         src: [
             'src/*.html',
@@ -37,6 +49,27 @@ var paths = {
         dest: 'build/'
     }
 };
+
+// Download jQuery if not exists
+function checkAndDownloadJQuery(cb) {
+    if (!fs.existsSync(jqueryPath)) {
+        console.log('Downloading jQuery...');
+        const file = fs.createWriteStream(jqueryPath);
+        https.get(jqueryCDN, (response) => {
+            response.pipe(file);
+            file.on('finish', () => {
+                file.close();
+                console.log('jQuery downloaded.');
+                cb();
+            });
+        }).on('error', (err) => {
+            console.error(`Error downloading jQuery: ${err.message}`);
+            cb(err);
+        });
+    } else {
+        cb();
+    }
+}
 
 /* Not all tasks need to use streams, a gulpfile is just another node program
  * and you can use all packages available on npm, but it must return either a
@@ -69,6 +102,11 @@ function styles() {
         .pipe(dest(paths.css.dest));
 }
 
+function fonts() {
+    return src(paths.fonts.src)
+        .pipe(dest(paths.fonts.dest));
+}
+
 function scripts() {
     return src(paths.js.src, { sourcemaps: true })
         .pipe(babel())
@@ -99,6 +137,7 @@ async function includeHTML() {
 function watchTasks() {
     watch(paths.css.src, series(parallel(styles, reload)));
     watch(paths.js.src, series(parallel(scripts, reload)));
+    watch(paths.fonts.src, series(parallel(fonts, reload)));
     watch(paths.images.src, series(parallel(images, reload)));
     watch(paths.svg.src, series(parallel(svg, reload)));
     watch("src/**/*.html", series(buildAndReload));
@@ -108,6 +147,7 @@ function watchTasks() {
 async function buildAndReload() {
     await styles();
     await scripts();
+    await fonts();
     await images();
     await svg();
     await includeHTML();
@@ -134,6 +174,8 @@ function build() {
 exports.clean = clean;
 exports.styles = styles;
 exports.scripts = scripts;
+exports.fonts = fonts;
+exports.checkAndDownloadJQuery = checkAndDownloadJQuery;
 exports.watchTasks = watchTasks;
 exports.build = build;
 exports.includeHTML = includeHTML;
@@ -141,4 +183,4 @@ exports.buildAndReload = buildAndReload;
 /*
  * Define default task that can be called by just running `gulp` from cli
  */
-exports.default = build;
+exports.default = series(checkAndDownloadJQuery, build);
