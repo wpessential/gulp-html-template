@@ -24,7 +24,8 @@
     "sass": "^1.85.1"
   },
   "scripts": {
-    "dev": "gulp"
+    "dev": "gulp",
+    "stop": "pkill -f webflow-cli || taskkill /IM node.exe /F"
   },
   "author": "",
   "license": "ISC"
